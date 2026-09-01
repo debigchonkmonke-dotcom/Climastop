@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="./favicon.png">
+  <link rel="icon" type="image/png" href="favicon.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="ClimaStop is a comfortable, climate-controlled bus stop for every journey." />
@@ -21,12 +21,12 @@
 
     * { box-sizing: border-box; }
     html {
-  scrollbar-width: none; /* Firefox */
-}
+      scrollbar-width: none;
+    }
 
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Edge, Safari */
-}
+    html::-webkit-scrollbar {
+      display: none;
+    }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
@@ -271,7 +271,7 @@ html::-webkit-scrollbar {
   </script>
   <script type="module">
     import * as THREE from "three";
-    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+    import { STLLoader } from "three/addons/loaders/STLLoader.js";
     import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
     const shell = document.querySelector(".viewer-shell");
@@ -311,17 +311,18 @@ html::-webkit-scrollbar {
     let defaultTarget = new THREE.Vector3(0, 0, 0);
     let defaultPosition = camera.position.clone();
 
-    const loader = new GLTFLoader();
+    const loader = new STLLoader();
     loader.load(
-      "white_mesh (2).glb",
-      (gltf) => {
-        const model = gltf.scene;
-        scene.add(model);
+      "your-model.stl",
+      (geometry) => {
+        const material = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.1, roughness: 0.7 });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
 
-        const box = new THREE.Box3().setFromObject(model);
+        const box = new THREE.Box3().setFromObject(mesh);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        model.position.sub(center);
+        mesh.position.sub(center);
 
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
         const dist = maxDim * 1.8;
