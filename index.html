@@ -21,11 +21,11 @@
 
     * { box-sizing: border-box; }
     html {
-      scrollbar-width: none;
+      scrollbar-width: none; /* Firefox */
     }
 
     html::-webkit-scrollbar {
-      display: none;
+      display: none; /* Chrome, Edge, Safari */
     }
     html { scroll-behavior: smooth; }
     body {
@@ -271,7 +271,7 @@
   </script>
   <script type="module">
     import * as THREE from "three";
-    import { STLLoader } from "three/addons/loaders/STLLoader.js";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
     import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
     const shell = document.querySelector(".viewer-shell");
@@ -311,18 +311,17 @@
     let defaultTarget = new THREE.Vector3(0, 0, 0);
     let defaultPosition = camera.position.clone();
 
-    const loader = new STLLoader();
+    const loader = new GLTFLoader();
     loader.load(
-      "white_mesh (2).stl",
-      (geometry) => {
-        const material = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.1, roughness: 0.7 });
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
+      "white_mesh (2).glb",
+      (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
 
-        const box = new THREE.Box3().setFromObject(mesh);
+        const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        mesh.position.sub(center);
+        model.position.sub(center);
 
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
         const dist = maxDim * 1.8;
